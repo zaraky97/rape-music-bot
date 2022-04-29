@@ -1,6 +1,6 @@
 import { Client, Intents } from 'discord.js';
+import { MEMBER_MUSIC_DATA } from './constants/memberMusicData';
 import { playMusic } from './playMusic';
-import { setMusicUrl } from './setMusicUrl';
 require('dotenv').config();
 
 const client = new Client({
@@ -23,23 +23,15 @@ client.on('messageCreate', (msg) => {
 });
 
 client.on('voiceStateUpdate', async (oldMember, newMember) => {
-  if (
-    (newMember.member?.user.username === process.env.DISCORD_BONSAI_NAME ||
-      newMember.member?.user.username === process.env.DISCORD_ZARAKY_NAME ||
-      newMember.member?.user.username === process.env.DISCORD_HOZ_NAME ||
-      newMember.member?.user.username === process.env.DISCORD_TAMA_NAME ||
-      newMember.member?.user.username === process.env.DISCORD_IKEDA_NAME ||
-      newMember.member?.user.username === process.env.DISCORD_MYRICA_NAME ||
-      newMember.member?.user.username === process.env.DISCORD_CHASO_NAME ||
-      newMember.member?.user.username === process.env.DISCORD_SoIo_NAME ||
-      newMember.member?.user.username === process.env.DISCORD_KANBAKU_NAME ||
-      oldMember.member?.user.username !== newMember.member?.user.username) &&
-    newMember.channelId
-  ) {
+  if (newMember.member?.user.username === 'rape-music-bot') return;
+  if (newMember.channelId) {
     if (!newMember.member?.user.username) return;
-    const url = setMusicUrl(newMember.member?.user.username);
-    if (!url) return;
-    playMusic(newMember, url);
+    console.log(newMember.member?.user.username);
+    const musicdata = MEMBER_MUSIC_DATA.find(
+      (data) => data.username === newMember.member?.user.username
+    );
+    if (!musicdata) return;
+    playMusic(newMember, musicdata);
   } else {
     console.log(`Left voice channel ${newMember.member?.user.username}`);
   }

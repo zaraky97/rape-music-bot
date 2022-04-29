@@ -8,8 +8,17 @@ import {
 import { VoiceState } from 'discord.js';
 import ytdl from 'ytdl-core';
 import fluentFfmpeg from 'fluent-ffmpeg';
+import ffmpeg_static from 'ffmpeg-static';
 
-export function playMusic(newMember: VoiceState, url: string) {
+export function playMusic(
+  newMember: VoiceState,
+  musicdata: {
+    username: string;
+    musicUrl: string;
+    start?: number | undefined;
+    duration?: number | undefined;
+  }
+) {
   const connection = joinVoiceChannel({
     guildId: newMember.guild.id,
     channelId: newMember.channelId ?? '',
@@ -20,23 +29,18 @@ export function playMusic(newMember: VoiceState, url: string) {
   });
   const player = createAudioPlayer();
   connection.subscribe(player);
-  console.log(newMember.member?.user.username);
-  const stream = ytdl(ytdl.getURLVideoID(url), {
-    filter: (format) =>
-      format.audioCodec === 'opus' && format.container === 'webm',
-    quality: 'highestaudio',
-    highWaterMark: 32 * 1024 * 1024, // https://github.com/fent/node-ytdl-core/issues/902
-  });
-  const resource = createAudioResource(stream, {
-    inputType: StreamType.WebmOpus,
+  const stream = ytdl(ytdl.getURLVideoID(musicdata.musicUrl));
+  fluentFfmpeg.setFfmpegPath(ffmpeg_static);
+  const editedSong = fluentFfmpeg({ source: stream })
+    .toFormat('mp3')
+    .setStartTime(musicdata.start ?? 0);
+  const resource = createAudioResource(editedSong as any, {
+    inputType: StreamType.Arbitrary,
     inlineVolume: true,
   });
-  let editedSong = fluentFfmpeg({ source: stream })
-    .toFormat('mp3')
-    .setStartTime(43); // set the song start time
-  resource.volume?.setVolume(0.5);
-  player.play(editedSong as any);
+  resource.volume?.setVolume(0.3);
+  player.play(resource);
   setTimeout(() => {
     player.stop();
-  }, 10000);
+  }, musicdata.duration ?? 10000);
 }
