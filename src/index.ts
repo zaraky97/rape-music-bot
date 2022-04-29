@@ -22,8 +22,12 @@ client.on('messageCreate', (msg) => {
   }
 });
 
-client.on('voiceStateUpdate', async (oldMember, newMember) => {
-  if (newMember.member?.user.username === 'rape-music-bot') return;
+client.on('voiceStateUpdate', (oldMember, newMember) => {
+  if (
+    newMember.member?.user.username === 'rape-music-bot' ||
+    oldMember.channelId === newMember.channelId
+  )
+    return;
   if (newMember.channelId) {
     if (!newMember.member?.user.username) return;
     console.log(newMember.member?.user.username);

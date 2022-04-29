@@ -11,7 +11,9 @@ export const MEMBER_MUSIC_DATA: {
   },
   {
     username: 'ざらきー',
-    musicUrl: 'https://www.youtube.com/watch?v=udUy5BWlBe0',
+    musicUrl: 'https://www.youtube.com/watch?v=upODO6OuOOk',
+    start: 9,
+    duration: 15000,
   },
   {
     username: 'hoz',
@@ -56,5 +58,11 @@ export const MEMBER_MUSIC_DATA: {
     musicUrl: 'https://www.youtube.com/watch?v=ko7GyBNbpwc&t=34s',
     start: 34,
     duration: 5000,
+  },
+  {
+    username: 'みずき',
+    musicUrl: 'https://www.youtube.com/watch?v=RTZK8KS-JWc',
+    start: 66,
+    duration: 15000,
   },
 ];
