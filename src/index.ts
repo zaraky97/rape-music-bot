@@ -1,17 +1,18 @@
 import { Client, Intents } from 'discord.js';
 import admin from 'firebase-admin';
-import { getFirestore, Timestamp, FieldValue } from 'firebase-admin/firestore';
-import { MEMBER_MUSIC_DATA } from './constants/memberMusicData';
+import { getFirestore } from 'firebase-admin/firestore';
 import { getMusicdata } from './firestore/getMusicdata';
 import { updateMusic } from './firestore/updateMusic';
 import { playMusic } from './playMusic';
 
 require('dotenv').config();
 
-var serviceAccount = require('../serviceAccountKey.json');
-
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert({
+    projectId: process.env.FIREBASE_PROJECTID,
+    clientEmail: process.env.FIREBASE_CLIENTEMAIL,
+    privateKey: process.env.FIREBASE_PRIVATEKEY,
+  }),
 });
 
 const db = getFirestore();
