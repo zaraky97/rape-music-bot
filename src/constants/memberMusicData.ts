@@ -69,6 +69,6 @@ export const MEMBER_MUSIC_DATA: {
     username: 'ransan',
     musicUrl: 'https://www.youtube.com/watch?v=664VCs3c1HU&ab_channel=Jerolli',
     start: 0,
-    duration: 15000,
+    duration: 20000,
   },
 ];
