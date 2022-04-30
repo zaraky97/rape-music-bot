@@ -30,7 +30,6 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
     return;
   if (newMember.channelId) {
     if (!newMember.member?.user.username) return;
-    console.log(newMember.member?.user.username);
     const musicdata = MEMBER_MUSIC_DATA.find(
       (data) => data.username === newMember.member?.user.username
     );
