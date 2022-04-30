@@ -11,7 +11,9 @@ admin.initializeApp({
   credential: admin.credential.cert({
     projectId: process.env.FIREBASE_PROJECTID,
     clientEmail: process.env.FIREBASE_CLIENTEMAIL,
-    privateKey: process.env.FIREBASE_PRIVATEKEY,
+    privateKey: process.env.FIREBASE_PRIVATEKEY
+      ? process.env.FIREBASE_PRIVATEKEY.replace(/\\n/g, '\n')
+      : '',
   }),
 });
 
@@ -66,6 +68,10 @@ client.on('messageCreate', async (msg) => {
     updateMusic(db, userId, username, msgDataObject);
     msg.channel.send(`更新! url: ${msgArray[1]}`);
   }
+  // if (msg.content === '!music-stop') {
+  //   const player = createAudioPlayer();
+  //   player.stop();
+  // }
 });
 
 client.on('voiceStateUpdate', async (oldMember, newMember) => {
