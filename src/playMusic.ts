@@ -13,10 +13,9 @@ import ffmpeg_static from 'ffmpeg-static';
 export function playMusic(
   newMember: VoiceState,
   musicdata: {
-    username: string;
-    musicUrl: string;
-    start?: number | undefined;
-    duration?: number | undefined;
+    urls: string[];
+    start: number;
+    duration: number;
   }
 ) {
   const connection = joinVoiceChannel({
@@ -27,20 +26,30 @@ export function playMusic(
     selfDeaf: true,
     selfMute: false,
   });
-  const player = createAudioPlayer();
-  connection.subscribe(player);
-  const stream = ytdl(ytdl.getURLVideoID(musicdata.musicUrl));
-  fluentFfmpeg.setFfmpegPath(ffmpeg_static);
-  const editedSong = fluentFfmpeg({ source: stream })
-    .toFormat('mp3')
-    .setStartTime(musicdata.start ?? 0);
-  const resource = createAudioResource(editedSong as any, {
-    inputType: StreamType.Arbitrary,
-    inlineVolume: true,
-  });
-  resource.volume?.setVolume(0.3);
-  player.play(resource);
-  setTimeout(() => {
-    player.stop();
-  }, musicdata.duration ?? 10000);
+  try {
+    const player = createAudioPlayer();
+    connection.subscribe(player);
+    const stream = ytdl(ytdl.getURLVideoID(musicdata.urls[0]), {
+      filter: 'audioonly',
+      highWaterMark: 1 << 62,
+      liveBuffer: 1 << 62,
+      dlChunkSize: 0, //disabling chunking is recommended in discord bot
+      quality: 'lowestaudio',
+    });
+    fluentFfmpeg.setFfmpegPath(ffmpeg_static);
+    const editedSong = fluentFfmpeg({ source: stream })
+      .toFormat('mp3')
+      .setStartTime(musicdata.start ?? 0);
+    const resource = createAudioResource(editedSong as any, {
+      inputType: StreamType.Arbitrary,
+      inlineVolume: true,
+    });
+    resource.volume?.setVolume(0.3);
+    player.play(resource);
+    setTimeout(() => {
+      player.stop();
+    }, musicdata.duration * 1000 ?? 10000);
+  } catch (e) {
+    console.log(e);
+  }
 }
