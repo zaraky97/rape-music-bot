@@ -75,11 +75,9 @@ client.on('voiceStateUpdate', async (oldMember, newMember) => {
     return;
   if (newMember.channelId) {
     if (!newMember.member?.user.username) return;
-    const musicdata = MEMBER_MUSIC_DATA.find(
-      (data) => data.username === newMember.member?.user.username
-    );
-    if (!musicdata) return;
-    playMusic(newMember, musicdata);
+    const storeMusicdata = await getMusicdata(db, newMember.id.toString());
+    if (!storeMusicdata) return;
+    playMusic(newMember, storeMusicdata);
   } else {
     console.log(`Left voice channel ${newMember.member?.user.username}`);
   }
