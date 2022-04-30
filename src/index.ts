@@ -1,7 +1,20 @@
 import { Client, Intents } from 'discord.js';
+import admin from 'firebase-admin';
+import { getFirestore, Timestamp, FieldValue } from 'firebase-admin/firestore';
 import { MEMBER_MUSIC_DATA } from './constants/memberMusicData';
+import { getMusicdata } from './firestore/getMusicdata';
+import { updateMusic } from './firestore/updateMusic';
 import { playMusic } from './playMusic';
+
 require('dotenv').config();
+
+var serviceAccount = require('../serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+const db = getFirestore();
 
 const client = new Client({
   intents: [
