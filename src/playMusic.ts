@@ -5,24 +5,24 @@ import {
   joinVoiceChannel,
   StreamType,
 } from '@discordjs/voice';
-import { VoiceState } from 'discord.js';
+import { Guild } from 'discord.js';
 import ytdl from 'ytdl-core';
 import fluentFfmpeg from 'fluent-ffmpeg';
 import ffmpeg_static from 'ffmpeg-static';
 
 export function playMusic(
-  newMember: VoiceState,
+  guild: Guild,
+  channelId: string,
   musicdata: {
     urls: string[];
-    start: number;
-    duration: number;
+    start?: number;
+    duration?: number;
   }
 ) {
   const connection = joinVoiceChannel({
-    guildId: newMember.guild.id,
-    channelId: newMember.channelId ?? '',
-    adapterCreator: newMember.guild
-      .voiceAdapterCreator as DiscordGatewayAdapterCreator,
+    guildId: guild.id,
+    channelId: channelId ?? '',
+    adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
     selfDeaf: true,
     selfMute: false,
   });
@@ -46,9 +46,12 @@ export function playMusic(
     });
     resource.volume?.setVolume(0.3);
     player.play(resource);
-    setTimeout(() => {
-      player.stop();
-    }, musicdata.duration * 1000 ?? 10000);
+    setTimeout(
+      () => {
+        player.stop();
+      },
+      musicdata.duration ? musicdata.duration * 1000 : 10000
+    );
   } catch (e) {
     console.log(e);
   }
