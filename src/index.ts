@@ -72,6 +72,30 @@ client.on('messageCreate', async (msg) => {
   //   const player = createAudioPlayer();
   //   player.stop();
   // }
+  if (msg.content.includes('!music-play')) {
+    const voiceChannelId = msg.member?.voice.channelId;
+    const msgArray = msg.content.split(' '); // example !music-play kochikame 2 url
+    if (!msgArray[1] || !msgArray[2] || msgArray[1] !== 'kochikame') return;
+    const storeMusicdata = await getMusic(db, msgArray[1], msgArray[2]);
+    if (!msg.guild || !voiceChannelId) return;
+    const currentConnection = getVoiceConnections().get(msg.guild.id);
+    if (currentConnection) {
+      currentConnection.destroy(); // streamが変になるのでdestoryしている
+    }
+    if (!storeMusicdata) {
+      if (!msgArray[3]) return;
+      updateMusic(db, 'kochikame', msgArray[2], { url: msgArray[3] });
+      playMusic(msg.guild, voiceChannelId, {
+        urls: [msgArray[3]],
+        duration: 100,
+      });
+    } else {
+      playMusic(msg.guild, voiceChannelId, {
+        urls: [storeMusicdata.url],
+        duration: 100,
+      });
+    }
+  }
 });
 
 client.on('voiceStateUpdate', async (oldMember, newMember) => {
