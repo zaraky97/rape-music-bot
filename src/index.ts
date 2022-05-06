@@ -1,7 +1,8 @@
 import { Client, Intents } from 'discord.js';
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import { getMusicdata } from './firestore/getMusicdata';
+import { getVoiceConnections } from '@discordjs/voice';
+import { getMusic } from './firestore/getMusic';
 import { updateMusic } from './firestore/updateMusic';
 import { playMusic } from './playMusic';
 
@@ -47,25 +48,25 @@ client.on('messageCreate', async (msg) => {
   }
   if (msg.content === '!music-me') {
     if (!userId) return;
-    const storeMusicdata = await getMusicdata(db, userId);
+    const storeMusicdata = await getMusic(db, 'users', userId);
     if (!storeMusicdata) {
       msg.channel.send('登場曲が見つからないッス');
     } else {
       msg.channel.send(
-        `${username}の登場曲: ${storeMusicdata.urls} ${storeMusicdata.start} ${storeMusicdata.duration}`
+        `${username}の登場曲: ${storeMusicdata.music.urls} ${storeMusicdata.music.start} ${storeMusicdata.music.duration}`
       );
     }
   }
   if (msg.content.includes('!music-update')) {
     const msgArray = msg.content.split(' ');
-    const msgDataObject = {
+    const music = {
       urls: [msgArray[1]],
       start: msgArray[2] ? +msgArray[2] : 0,
       duration: msgArray[3] ? +msgArray[3] : 15,
     };
     if (!userId || !username) return;
     if (username === 'rape-music-bot') return;
-    updateMusic(db, userId, username, msgDataObject);
+    updateMusic(db, 'users', userId, { name: username, music });
     msg.channel.send(`更新! url: ${msgArray[1]}`);
   }
   // if (msg.content === '!music-stop') {
