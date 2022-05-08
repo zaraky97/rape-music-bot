@@ -70,10 +70,9 @@ client.on('messageCreate', async (msg) => {
     updateMusic(db, 'users', userId, { name: username, music });
     msg.channel.send(`更新! url: ${msgArray[1]}`);
   }
-  // if (msg.content === '!music-stop') {
-  //   const player = createAudioPlayer();
-  //   player.stop();
-  // }
+  if (msg.content === '!music-stop') {
+    audioPlayer.stop();
+  }
   if (msg.content.includes('!music-play')) {
     const voiceChannelId = msg.member?.voice.channelId;
     const msgArray = msg.content.split(' '); // example !music-play kochikame 2 url
