@@ -62,8 +62,8 @@ client.on('messageCreate', async (msg) => {
     if (!msgArray[1].includes('youtube.com')) return;
     const music = {
       urls: [msgArray[1]],
-      start: msgArray[2] ? +msgArray[2] : 0,
-      duration: msgArray[3] ? +msgArray[3] : 15,
+      start: msgArray[2] && !isNaN(+msgArray[2]) ? +msgArray[2] : 0,
+      duration: msgArray[3] && !isNaN(+msgArray[3]) ? +msgArray[3] : 15,
     };
     if (!userId || !username) return;
     if (username === 'rape-music-bot') return;
