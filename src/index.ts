@@ -59,6 +59,7 @@ client.on('messageCreate', async (msg) => {
   }
   if (msg.content.includes('!music-update')) {
     const msgArray = msg.content.split(' ');
+    if (!msgArray[1].includes('youtube.com')) return;
     const music = {
       urls: [msgArray[1]],
       start: msgArray[2] ? +msgArray[2] : 0,
