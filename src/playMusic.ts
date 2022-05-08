@@ -1,13 +1,9 @@
 import {
   AudioPlayer,
-  createAudioPlayer,
   createAudioResource,
-  DiscordGatewayAdapterCreator,
-  joinVoiceChannel,
   StreamType,
   VoiceConnection,
 } from '@discordjs/voice';
-import { Guild } from 'discord.js';
 import ytdl from 'ytdl-core';
 import fluentFfmpeg from 'fluent-ffmpeg';
 import ffmpeg_static from 'ffmpeg-static';
