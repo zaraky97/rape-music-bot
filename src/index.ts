@@ -98,12 +98,12 @@ client.on('messageCreate', async (msg) => {
       updateMusic(db, 'kochikame', msgArray[2], { url: msgArray[3] });
       playMusic(connection, audioPlayer, {
         urls: [msgArray[3]],
-        duration: 100,
+        duration: 50000,
       });
     } else {
       playMusic(connection, audioPlayer, {
         urls: [storeMusicdata.url],
-        duration: 100,
+        duration: 50000,
       });
     }
   }
