@@ -1,9 +1,11 @@
 import {
+  AudioPlayer,
   createAudioPlayer,
   createAudioResource,
   DiscordGatewayAdapterCreator,
   joinVoiceChannel,
   StreamType,
+  VoiceConnection,
 } from '@discordjs/voice';
 import { Guild } from 'discord.js';
 import ytdl from 'ytdl-core';
@@ -11,24 +13,16 @@ import fluentFfmpeg from 'fluent-ffmpeg';
 import ffmpeg_static from 'ffmpeg-static';
 
 export function playMusic(
-  guild: Guild,
-  channelId: string,
+  connection: VoiceConnection,
+  audioPlayer: AudioPlayer,
   musicdata: {
     urls: string[];
     start?: number;
     duration?: number;
   }
 ) {
-  const connection = joinVoiceChannel({
-    guildId: guild.id,
-    channelId: channelId ?? '',
-    adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
-    selfDeaf: true,
-    selfMute: false,
-  });
   try {
-    const player = createAudioPlayer();
-    connection.subscribe(player);
+    connection.subscribe(audioPlayer);
     const stream = ytdl(ytdl.getURLVideoID(musicdata.urls[0]), {
       filter: 'audioonly',
       highWaterMark: 1 << 62,
@@ -45,10 +39,10 @@ export function playMusic(
       inlineVolume: true,
     });
     resource.volume?.setVolume(0.3);
-    player.play(resource);
+    audioPlayer.play(resource);
     setTimeout(
       () => {
-        player.stop();
+        audioPlayer.stop();
       },
       musicdata.duration ? musicdata.duration * 1000 : 10000
     );
