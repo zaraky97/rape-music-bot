@@ -1,7 +1,13 @@
-import { Client, Intents } from 'discord.js';
+import { Client, Guild, Intents } from 'discord.js';
 import admin from 'firebase-admin';
 import { getFirestore } from 'firebase-admin/firestore';
-import { getVoiceConnections } from '@discordjs/voice';
+import {
+  createAudioPlayer,
+  DiscordGatewayAdapterCreator,
+  getVoiceConnections,
+  joinVoiceChannel,
+  VoiceConnection,
+} from '@discordjs/voice';
 import { getMusic } from './firestore/getMusic';
 import { updateMusic } from './firestore/updateMusic';
 import { playMusic } from './playMusic';
@@ -19,6 +25,8 @@ admin.initializeApp({
 });
 
 const db = getFirestore();
+var connection: VoiceConnection | undefined = undefined;
+const audioPlayer = createAudioPlayer();
 
 const client = new Client({
   intents: [
@@ -81,17 +89,18 @@ client.on('messageCreate', async (msg) => {
     if (!msg.guild || !voiceChannelId) return;
     const currentConnection = getVoiceConnections().get(msg.guild.id);
     if (currentConnection) {
-      currentConnection.destroy(); // streamが変になるのでdestoryしている
+      audioPlayer.stop();
     }
+    connection = joinChannel(msg.guild, voiceChannelId);
     if (!storeMusicdata) {
       if (!msgArray[3]) return;
       updateMusic(db, 'kochikame', msgArray[2], { url: msgArray[3] });
-      playMusic(msg.guild, voiceChannelId, {
+      playMusic(connection, audioPlayer, {
         urls: [msgArray[3]],
         duration: 100,
       });
     } else {
-      playMusic(msg.guild, voiceChannelId, {
+      playMusic(connection, audioPlayer, {
         urls: [storeMusicdata.url],
         duration: 100,
       });
@@ -109,9 +118,20 @@ client.on('voiceStateUpdate', async (oldMember, newMember) => {
     if (!newMember.member?.user.username) return;
     const storeMusicdata = await getMusic(db, 'users', newMember.id.toString());
     if (!storeMusicdata) return;
-    playMusic(newMember.guild, newMember.channelId, storeMusicdata.music);
+    connection = joinChannel(newMember.guild, newMember.channelId);
+    playMusic(connection, audioPlayer, storeMusicdata.music);
   } else {
     console.log(`Left voice channel ${newMember.member?.user.username}`);
   }
 });
 client.login(process.env.DISCORD_TOKEN);
+
+function joinChannel(guild: Guild, channelId: string) {
+  return joinVoiceChannel({
+    guildId: guild.id,
+    channelId: channelId ?? '',
+    adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
+    selfDeaf: true,
+    selfMute: false,
+  });
+}
