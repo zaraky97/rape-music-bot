@@ -53,6 +53,7 @@ client.on('messageCreate', async (msg) => {
     );
     msg.channel.send('自分が登録した曲の確認\n```!music-me```');
     msg.channel.send('サーバーに登録されている曲の確認\n```!music-list```');
+    msg.channel.send('曲を止めたいとき\n```!music-stop```');
   }
   if (msg.content === '!music-me') {
     if (!userId) return;
