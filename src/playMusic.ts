@@ -29,19 +29,14 @@ export function playMusic(
     fluentFfmpeg.setFfmpegPath(ffmpeg_static);
     const editedSong = fluentFfmpeg({ source: stream })
       .toFormat('mp3')
-      .setStartTime(musicdata.start ?? 0);
+      .setStartTime(musicdata.start ?? 0)
+      .setDuration(musicdata.duration ? musicdata.duration * 1000 : 10000);
     const resource = createAudioResource(editedSong as any, {
       inputType: StreamType.Arbitrary,
       inlineVolume: true,
     });
     resource.volume?.setVolume(0.3);
     audioPlayer.play(resource);
-    setTimeout(
-      () => {
-        audioPlayer.stop();
-      },
-      musicdata.duration ? musicdata.duration * 1000 : 10000
-    );
   } catch (e) {
     console.log(e);
   }
