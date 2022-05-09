@@ -83,28 +83,34 @@ client.on('messageCreate', async (msg) => {
     audioPlayer.stop();
   }
   if (msg.content.includes('!music-play')) {
-    const voiceChannelId = msg.member?.voice.channelId;
-    const msgArray = msg.content.split(' '); // example !music-play kochikame 2 url
-    if (!msgArray[1] || !msgArray[2]) return;
-    const storeMusicdata = await getMusic(db, msgArray[1], msgArray[2]);
-    if (!msg.guild || !voiceChannelId) return;
-    const currentConnection = getVoiceConnections().get(msg.guild.id);
-    if (currentConnection) {
-      audioPlayer.stop();
-    }
-    connection = joinChannel(msg.guild, voiceChannelId);
-    if (!storeMusicdata) {
-      if (!msgArray[3]) return;
-      updateMusic(db, msgArray[1], msgArray[2], { url: msgArray[3] });
-      playMusic(connection, audioPlayer, {
-        urls: [msgArray[3]],
-        duration: 50000,
-      });
-    } else {
-      playMusic(connection, audioPlayer, {
-        urls: [storeMusicdata.url],
-        duration: 50000,
-      });
+    try {
+      const voiceChannelId = msg.member?.voice.channelId;
+      const msgArray = msg.content.split(' '); // example !music-play kochikame 2 url
+      if (!msgArray[1] || !msgArray[2]) return;
+      const storeMusicdata = await getMusic(db, msgArray[1], msgArray[2]);
+      if (!msg.guild || !voiceChannelId) return;
+      const currentConnection = getVoiceConnections().get(msg.guild.id);
+      if (currentConnection) {
+        audioPlayer.stop();
+      }
+      console.log(msgArray, 1);
+      console.log(storeMusicdata, 2);
+      connection = joinChannel(msg.guild, voiceChannelId);
+      if (!storeMusicdata) {
+        if (!msgArray[3]) return;
+        updateMusic(db, msgArray[1], msgArray[2], { url: msgArray[3] });
+        playMusic(connection, audioPlayer, {
+          urls: [msgArray[3]],
+          duration: 50000,
+        });
+      } else {
+        playMusic(connection, audioPlayer, {
+          urls: [storeMusicdata.url],
+          duration: 50000,
+        });
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 });
