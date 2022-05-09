@@ -40,6 +40,7 @@ export function playMusic(
     resource.volume?.setVolume(0.3);
     audioPlayer.play(resource);
   } catch (e) {
+    console.log('error', 'play music');
     console.log(e);
   }
 }
