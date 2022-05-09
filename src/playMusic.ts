@@ -19,6 +19,7 @@ export function playMusic(
 ) {
   try {
     connection.subscribe(audioPlayer);
+    console.log('1111111');
     const stream = ytdl(ytdl.getURLVideoID(musicdata.urls[0]), {
       filter: 'audioonly',
       highWaterMark: 1 << 62,
@@ -26,6 +27,7 @@ export function playMusic(
       dlChunkSize: 0, //disabling chunking is recommended in discord bot
       quality: 'lowestaudio',
     });
+    console.log('stream', stream);
     fluentFfmpeg.setFfmpegPath(ffmpeg_static);
     const editedSong = fluentFfmpeg({ source: stream })
       .toFormat('mp3')
