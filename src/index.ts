@@ -85,7 +85,7 @@ client.on('messageCreate', async (msg) => {
   if (msg.content.includes('!music-play')) {
     const voiceChannelId = msg.member?.voice.channelId;
     const msgArray = msg.content.split(' '); // example !music-play kochikame 2 url
-    if (!msgArray[1] || !msgArray[2] || msgArray[1] !== 'kochikame') return;
+    if (!msgArray[1] || !msgArray[2]) return;
     const storeMusicdata = await getMusic(db, msgArray[1], msgArray[2]);
     if (!msg.guild || !voiceChannelId) return;
     const currentConnection = getVoiceConnections().get(msg.guild.id);
@@ -95,7 +95,7 @@ client.on('messageCreate', async (msg) => {
     connection = joinChannel(msg.guild, voiceChannelId);
     if (!storeMusicdata) {
       if (!msgArray[3]) return;
-      updateMusic(db, 'kochikame', msgArray[2], { url: msgArray[3] });
+      updateMusic(db, msgArray[1], msgArray[2], { url: msgArray[3] });
       playMusic(connection, audioPlayer, {
         urls: [msgArray[3]],
         duration: 50000,
