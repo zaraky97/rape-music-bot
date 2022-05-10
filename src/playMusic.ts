@@ -18,8 +18,7 @@ export function playMusic(
   }
 ) {
   try {
-    connection.subscribe(audioPlayer);
-    console.log('1111111');
+    const subscriber = connection.subscribe(audioPlayer);
     const stream = ytdl(ytdl.getURLVideoID(musicdata.urls[0]), {
       filter: 'audioonly',
       highWaterMark: 1 << 62,
@@ -27,20 +26,28 @@ export function playMusic(
       dlChunkSize: 0, //disabling chunking is recommended in discord bot
       quality: 'lowestaudio',
     });
-    console.log('stream', stream);
-    fluentFfmpeg.setFfmpegPath(ffmpeg_static);
-    const editedSong = fluentFfmpeg({ source: stream })
-      .toFormat('mp3')
-      .setStartTime(musicdata.start ?? 0)
-      .setDuration(musicdata.duration ? musicdata.duration * 1000 : 10000);
+    let editedSong = undefined;
+    if (musicdata.start || musicdata.duration) {
+      fluentFfmpeg.setFfmpegPath(ffmpeg_static);
+      editedSong = fluentFfmpeg({ source: stream })
+        .toFormat('mp3')
+        .setStartTime(musicdata.start ?? 0)
+        .setDuration(musicdata.duration ? musicdata.duration * 1000 : 10000);
+    } else {
+      editedSong = stream;
+    }
     const resource = createAudioResource(editedSong as any, {
       inputType: StreamType.Arbitrary,
       inlineVolume: true,
     });
     resource.volume?.setVolume(0.3);
     audioPlayer.play(resource);
+    audioPlayer.addListener('stateChange', (oldState: any, newState: any) => {
+      if (newState.status === 'idle') {
+        subscriber?.unsubscribe();
+      }
+    });
   } catch (e) {
-    console.log('error', 'play music');
-    console.log(e);
+    console.log(e, 'play music');
   }
 }
