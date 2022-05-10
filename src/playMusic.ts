@@ -34,7 +34,7 @@ export function playMusic(
       editedSong = fluentFfmpeg({ source: readableStream })
         .toFormat('mp3')
         .setStartTime(musicdata.start ?? 0)
-        .duration(musicdata.duration ? musicdata.duration : 10);
+        .setDuration(musicdata.duration ? musicdata.duration : 10);
     } else {
       editedSong = readableStream;
     }
