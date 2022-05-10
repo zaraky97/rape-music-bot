@@ -101,12 +101,10 @@ client.on('messageCreate', async (msg) => {
         updateMusic(db, msgArray[1], msgArray[2], { url: msgArray[3] });
         playMusic(connection, audioPlayer, {
           urls: [msgArray[3]],
-          duration: 50000,
         });
       } else {
         playMusic(connection, audioPlayer, {
           urls: [storeMusicdata.url],
-          duration: 50000,
         });
       }
     } catch (e) {
