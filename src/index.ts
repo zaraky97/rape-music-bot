@@ -52,7 +52,7 @@ client.on('messageCreate', async (msg) => {
       '曲の登録・更新\n```!music-update youtubeのurl 始まりの時間(s) 動画の長さ(s)\n例）!music-update https://www.youtube.com/watch?v=upODO6OuOOk 9 15```'
     );
     msg.channel.send('自分が登録した曲の確認\n```!music-me```');
-    msg.channel.send('サーバーに登録されている曲の確認\n```!music-list```');
+    // msg.channel.send('サーバーに登録されている曲の確認\n```!music-list```');
     msg.channel.send('曲を止めたいとき\n```!music-stop```');
   }
   if (msg.content === '!music-me') {
