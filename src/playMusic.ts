@@ -26,15 +26,13 @@ export function playMusic(
       dlChunkSize: 0, //disabling chunking is recommended in discord bot
       quality: 'lowestaudio',
     });
-    // const { stream, type } = await demuxProbe(readableStream);
-    // console.log(stream, type);
     let editedSong = undefined;
     if (musicdata.start || musicdata.duration) {
       fluentFfmpeg.setFfmpegPath(ffmpeg_static);
       editedSong = fluentFfmpeg({ source: readableStream })
         .toFormat('mp3')
         .setStartTime(musicdata.start ?? 0)
-        .setDuration(musicdata.duration ? musicdata.duration : 10);
+        .setDuration(musicdata.duration ?? 10);
     } else {
       editedSong = readableStream;
     }
@@ -44,13 +42,6 @@ export function playMusic(
     });
     resource.volume?.setVolume(0.5);
     audioPlayer.play(resource);
-    // audioPlayer.on('stateChange', (oldState: any, newState: any) => {
-    //   console.log(oldState.status, newState.status);
-    //   if (newState.status === 'idle') {
-    //     subscriber?.unsubscribe();
-    //     audioPlayer.stop();
-    //   }
-    // });
   } catch (e) {
     console.log(e, 'play music');
   }
