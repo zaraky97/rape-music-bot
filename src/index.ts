@@ -75,7 +75,7 @@ client.on('messageCreate', async (msg) => {
       duration: msgArray[3] && !isNaN(+msgArray[3]) ? +msgArray[3] : 15,
     };
     if (!userId || !username) return;
-    if (username === 'rape-music-bot') return;
+    if (username === 'zara-music-bot') return;
     updateMusic(db, 'users', userId, { name: username, music });
     msg.channel.send(`更新! url: ${msgArray[1]}`);
   }
@@ -93,8 +93,6 @@ client.on('messageCreate', async (msg) => {
       if (currentConnection) {
         audioPlayer.stop();
       }
-      console.log(msgArray, 1);
-      console.log(storeMusicdata, 2);
       connection = joinChannel(msg.guild, voiceChannelId);
       if (!storeMusicdata) {
         if (!msgArray[3]) return;
@@ -115,7 +113,7 @@ client.on('messageCreate', async (msg) => {
 
 client.on('voiceStateUpdate', async (oldMember, newMember) => {
   if (
-    newMember.member?.user.username === 'rape-music-bot' ||
+    newMember.member?.user.username === 'zara-music-bot' ||
     oldMember.channelId === newMember.channelId
   )
     return;
